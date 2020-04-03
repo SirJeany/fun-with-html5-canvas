@@ -17,22 +17,56 @@
         ctx.strokeStyle = '#BADA55';
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
+        ctx.lineWidth = "50";
 
         let isDrawing = false; // To check if the mouse down is currently being pressed
 
         let lastX = 0; // where you start and end
         let lastY = 0;
 
+        let hue = 0;
+
         function draw(e) {
-            console.log(e);
+            if(!isDrawing) return; // dont want anything to happen when not drawing.
+            
+            // console.log(e);
+            ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+
+            ctx.beginPath();
+            [lastX, lastY] = [e.offsetX*2, e.offsetY];
+            ctx.moveTo(lastX, lastY); // Start from
+            ctx.lineTo(e.offsetX, e.offsetY);// Move to
+            ctx.stroke();
+
+            hue++; // Updates color as brush moves
+            if(hue > 361) {
+                hue = 0;
+            }
+            if(hue > 180){
+                ctx.lineWidth = (hue+100)/20;
+            }
+            else{
+                ctx.lineWidth = (hue+100)/8;
+            }
         }
 
         canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mousedown', () => {
+            isDrawing = true;
+            [lastX, lastY] = [this.offsetX, this.offsetY];
+        });
+        // canvas.addEventListener('onclick', () => {
+        //     isDrawing = true;
+        //     [lastX, lastY] = [this.offsetX, this.offsetY];
+        // });
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseout', () => isDrawing = false);
     </script>
 
     <style>
-        html, body {
+        html, body, canvas {
             margin: 0;
+            padding: 0;
         }
     </style>
 </body>
